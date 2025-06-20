@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-          
+            
             $table->text('address')->nullable(); // address
             $table->string('email')->nullable(); // email
             $table->string('phone')->nullable(); // phone number
@@ -22,8 +22,9 @@ return new class extends Migration
             $table->text('twitter')->nullable(); // twitterlink
             $table->text('linkedin')->nullable(); // linkedinlink
             $table->text('pinterest')->nullable(); // facebaooklink
+            $table->boolean('status')->default(false); 
             $table->timestamps();
-         
+            
         });
     }
 

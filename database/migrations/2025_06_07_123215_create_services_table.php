@@ -14,17 +14,17 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-          
-                $table->string('image_url', 500)->nullable();
+
+            $table->string('image_url', 500)->nullable();
             $table->string('image_title', 500)->nullable();
             $table->integer('image_size')->nullable();
             $table->string('image_ext', 45)->nullable();
             $table->string('image_token', 500)->nullable();
-            $table->string('title')->nullable(); // email
-            $table->text('content')->nullable(); // phone number
-        
+            $table->string('title')->nullable(); 
+            $table->text('content')->nullable(); 
+
             $table->timestamps();
-         
+
         });
     }
 
