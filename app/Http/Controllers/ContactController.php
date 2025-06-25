@@ -10,17 +10,17 @@ use App\Mail\ContactFormMail;
 
 class ContactController extends Controller
 {
-    
-    public function index()
-    {
-        $contacts = Contact::orderBy('created_at', 'desc')->get();
 
-        return response()->json([
-            'data' => $contacts
-        ]);
+    public function index(Request $request)
+    {
+        $contacts = Contact::paginate(8); 
+         
+
+        return response()->json($contacts); 
     }
 
-   
+
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -35,7 +35,7 @@ class ContactController extends Controller
             'status' => false, 
         ]);
 
-         Mail::to('admin@example.com')->send(new ContactFormMail($validated));
+        Mail::to('admin@example.com')->send(new ContactFormMail($validated));
 
         return response()->json([
             'id' => $contact->id,
@@ -44,7 +44,7 @@ class ContactController extends Controller
         ]);
     }
 
-   
+
     public function update(Request $request, $id)
     {
         $contact = Contact::findOrFail($id);
@@ -61,7 +61,7 @@ class ContactController extends Controller
         ]);
     }
 
-    
+
     public function destroy($id)
     {
         $contact = Contact::findOrFail($id);

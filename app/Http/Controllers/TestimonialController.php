@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
+
 use App\Models\Testimonial;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
 class TestimonialController extends Controller
 {
@@ -18,11 +21,19 @@ class TestimonialController extends Controller
             'name' => 'nullable|string|max:255',
             'designation' => 'nullable|string|max:255',
             'message' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('uploads/testimonials', 'public');
+            $image = $request->file('image');
+            $imageName = uniqid() . '.webp';
+            $imagePath = 'uploads/testimonials/' . $imageName;
+
+            // Convert to WebP
+            $manager = new ImageManager(new GdDriver());
+            $webpImage = $manager->read($image)->toWebp(85); // 85% quality
+            Storage::disk('public')->put($imagePath, (string) $webpImage);
+
             $validated['image_url'] = "storage/$imagePath";
         }
 
@@ -43,10 +54,11 @@ class TestimonialController extends Controller
             'name' => 'nullable|string|max:255',
             'designation' => 'nullable|string|max:255',
             'message' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
+            // Delete old image if exists
             if ($testimonial->image_url) {
                 $relativePath = str_replace('storage/', '', $testimonial->image_url);
                 if (Storage::disk('public')->exists($relativePath)) {
@@ -54,7 +66,15 @@ class TestimonialController extends Controller
                 }
             }
 
-            $imagePath = $request->file('image')->store('uploads/testimonials', 'public');
+            $image = $request->file('image');
+            $imageName = uniqid() . '.webp';
+            $imagePath = 'uploads/testimonials/' . $imageName;
+
+            // Convert to WebP
+            $manager = new ImageManager(new GdDriver());
+            $webpImage = $manager->read($image)->toWebp(85);
+            Storage::disk('public')->put($imagePath, (string) $webpImage);
+
             $validated['image_url'] = "storage/$imagePath";
         }
 
@@ -90,8 +110,8 @@ class TestimonialController extends Controller
         return response()->json(Testimonial::findOrFail($id));
     }
 
-    public function publicList() {
+    public function publicList()
+    {
         return response()->json(Testimonial::orderBy('created_at', 'desc')->get());
     }
-
 }
