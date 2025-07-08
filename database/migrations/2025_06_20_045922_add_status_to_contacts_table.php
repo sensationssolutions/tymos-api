@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('contacts', function (Blueprint $table) {
-            $table->boolean('status')->default(false)->after('pinterest');
-        });
+        // Schema::table('contacts', function (Blueprint $table) {
+        //     $table->boolean('status')->default(false)->after('pinterest');
+        // });
     }
 
     public function down(): void
