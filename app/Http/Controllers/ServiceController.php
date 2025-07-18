@@ -79,7 +79,7 @@ class ServiceController extends Controller
                 Storage::disk('public')->makeDirectory('uploads');
             }
 
-            // Delete old image if exists
+  
             if ($service->image_url && Storage::disk('public')->exists(str_replace('storage/', '', $service->image_url))) {
                 Storage::disk('public')->delete(str_replace('storage/', '', $service->image_url));
             }
@@ -132,6 +132,6 @@ class ServiceController extends Controller
 
     public function publicList()
     {
-        return response()->json(Service::orderBy('created_at', 'desc')->get());
+        return response()->json(Service::orderBy('created_at', 'asc')->get());
     }
 }
